@@ -7,6 +7,7 @@ class PortfolioApp:
         self.app = dash.Dash(__name__,
                               external_stylesheets=[
                                   "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css",
+                                  "https://cdn.jsdelivr.net/npm/daisyui@1.14.0/dist/full.css",
                                   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
                               ],
                               meta_tags=[
@@ -14,60 +15,51 @@ class PortfolioApp:
                                    "content": "width=device-width, initial-scale=1"}
                               ])
 
-        self.app.title = "Developer Portfolio"
+        self.app.title = "Colorful Developer Portfolio"
+
         self.app.layout = self.create_layout()
         self.register_callbacks()
 
     def create_layout(self):
         return html.Div([
-            # Sidebar Navigation
-            html.Div([
-                # Profile Section
-                html.Div([
-                    html.Img(src="/assets/profile.png", className="rounded-full w-24 h-24 mx-auto mb-4"),
-                    html.H2("Alex Rodriguez", className="text-xl font-bold text-center text-white"),
-                    html.P("Full Stack Developer", className="text-sm text-center text-gray-400")
-                ], className="mb-8"),
-
-                # Navigation Links
-                html.Nav([
-                    html.Ul([
-                        html.Li(html.A([
-                            html.I(className="fas fa-home mr-3"),
-                            "Home"
-                        ], href="/", className="nav-link")),
-                        html.Li(html.A([
-                            html.I(className="fas fa-project-diagram mr-3"),
-                            "Projects"
-                        ], href="/projects", className="nav-link")),
-                        html.Li(html.A([
-                            html.I(className="fas fa-code mr-3"),
-                            "Skills"
-                        ], href="/skills", className="nav-link")),
-                        html.Li(html.A([
-                            html.I(className="fas fa-envelope mr-3"),
-                            "Contact"
-                        ], href="/contact", className="nav-link"))
-                    ])
+            # Navbar with Red, Yellow, Blue Theme
+            html.Nav(className="navbar bg-gradient-to-r from-red-600 via-yellow-500 to-blue-600 text-white shadow-lg", children=[
+                html.Div(className="flex-1", children=[
+                    html.A(
+                        html.I(className="fas fa-user-circle text-2xl"),
+                        href="/",
+                        className="btn btn-ghost normal-case text-xl"
+                    ),
+                    html.Span("Your Name", className="text-xl font-bold ml-2")
                 ]),
+                html.Div(className="flex-none", children=[
+                    html.Ul(className="menu menu-horizontal p-0", children=[
+                        html.Li(html.A([
+                            html.I(className="fas fa-home mr-2 text-red-300"),
+                            "Home"
+                        ], href="/")),
+                        html.Li(html.A([
+                            html.I(className="fas fa-project-diagram mr-2 text-yellow-300"),
+                            "Projects"
+                        ], href="/projects")),
+                        html.Li(html.A([
+                            html.I(className="fas fa-code mr-2 text-blue-300"),
+                            "Skills"
+                        ], href="/skills")),
+                        html.Li(html.A([
+                            html.I(className="fas fa-envelope mr-2 text-red-300"),
+                            "Contact"
+                        ], href="/contact")),
+                    ])
+                ])
+            ]),
 
-                # Social Links
-                html.Div([
-                    html.A(html.I(className="fab fa-github"), href="#", className="social-icon"),
-                    html.A(html.I(className="fab fa-linkedin"), href="#", className="social-icon"),
-                    html.A(html.I(className="fab fa-twitter"), href="#", className="social-icon")
-                ], className="flex justify-center mt-8")
-            ], className="fixed left-0 top-0 h-full w-64 bg-gray-900 p-6 text-white"),
+            # Content area with Soft Background
+            html.Div(id='page-content', className='p-4 bg-gradient-to-br from-red-50 via-yellow-50 to-blue-50 text-gray-800'),
 
-            # Main Content Area
-            html.Div([
-                # Content will be dynamically loaded here
-                html.Div(id='page-content', className='p-8')
-            ], className="ml-64 bg-gray-100 min-h-screen"),
-
-            # Location for routing
+            # Pages
             dcc.Location(id='url', refresh=False)
-        ], className="flex")
+        ])
 
     def register_callbacks(self):
         @self.app.callback(
@@ -86,96 +78,99 @@ class PortfolioApp:
             return self.home_page()
 
     def home_page(self):
-        return html.Div([
-            html.H1("Welcome to My Digital Space", className="text-4xl font-bold mb-6 text-gray-800"),
-            html.Div([
-                html.P("I craft elegant solutions through code, transforming complex problems into simple, efficient applications.",
-                       className="text-xl text-gray-600 mb-6"),
-                html.A("View My Work", href="/projects",
-                       className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300")
+        return html.Div(className="hero min-h-screen", children=[
+            html.Div(className="hero-content flex-col lg:flex-row", children=[
+                html.Div(className="max-w-md", children=[
+                    html.H1("Welcome to My Portfolio", className="text-5xl font-bold text-red-600"),
+                    html.P("I'm a passionate developer creating innovative solutions", className="py-6 text-blue-600"),
+                    html.A([
+                        html.I(className="fas fa-eye mr-2"),
+                        "View My Projects"
+                    ], href="/projects", className="btn btn-primary bg-yellow-500 hover:bg-yellow-600 text-white")
+                ]),
+                html.Div(className="max-w-sm flex justify-center items-center", children=[
+                    html.I(className="fas fa-user-circle text-6xl text-blue-600")
+                ])
             ])
         ])
 
     def projects_page(self):
         projects = [
             {
-                "name": "AI Recommendation Engine",
-                "description": "Machine learning system for personalized recommendations",
-                "technologies": ["Python", "TensorFlow", "scikit-learn"],
-                "icon": "fas fa-robot"
+                "name": "Project 1",
+                "description": "A web application for task management",
+                "technologies": ["Python", "Dash", "Bootstrap"],
+                "link": "#"
             },
             {
-                "name": "Real-time Dashboard",
-                "description": "Interactive data visualization platform",
-                "technologies": ["Dash", "Plotly", "React"],
-                "icon": "fas fa-chart-line"
+                "name": "Project 2",
+                "description": "Machine learning recommendation system",
+                "technologies": ["Python", "scikit-learn", "Pandas"],
+                "link": "#"
             }
         ]
 
-        return html.Div([
-            html.H2("Featured Projects", className="text-3xl font-bold mb-6 text-gray-800"),
-            html.Div([
-                html.Div([
-                    html.Div([
-                        html.I(className=f"{project['icon']} text-4xl mb-4 text-blue-600"),
-                        html.H3(project["name"], className="text-xl font-semibold mb-2"),
-                        html.P(project["description"], className="text-gray-600 mb-4"),
-                        html.Div([
-                            html.Span(tech, className="bg-gray-200 px-2 py-1 rounded mr-2 text-sm")
-                            for tech in project["technologies"]
-                        ])
-                    ], className="p-6 bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300")
-                    for project in projects
-                ], className="grid grid-cols-2 gap-6")
+        return html.Div(className="p-4", children=[
+            html.H2("My Projects", className="text-3xl font-bold mb-4 text-red-600"),
+            html.Div(className="grid grid-cols-1 md:grid-cols-2 gap-4", children=[
+                html.Div(className="card bg-white shadow-lg rounded-lg border-2 border-yellow-500", children=[
+                    html.Div(className="card-body", children=[
+                        html.H5(project["name"], className="card-title text-xl font-semibold text-blue-600"),
+                        html.P(project["description"], className="card-text text-red-600"),
+                        html.P(f"Technologies: {', '.join(project['technologies'])}", className="card-text text-yellow-600"),
+                        html.A([
+                            html.I(className="fas fa-link mr-2"),
+                            "View Project"
+                        ], href=project["link"], className="btn btn-primary bg-blue-500 hover:bg-blue-600 text-white")
+                    ])
+                ]) for project in projects
             ])
         ])
 
     def skills_page(self):
         skills = {
-            "Languages": ["Python", "JavaScript", "Java"],
-            "Frameworks": ["Dash", "React", "Django"],
-            "Tools": ["Git", "Docker", "Kubernetes"]
+            "Programming Languages": ["Python", "JavaScript", "Java"],
+            "Web Technologies": ["Dash", "Flask", "React"],
+            "Data Science": ["Pandas", "NumPy", "scikit-learn"]
         }
 
-        return html.Div([
-            html.H2("Technical Skills", className="text-3xl font-bold mb-6 text-gray-800"),
-            html.Div([
-                html.Div([
-                    html.H3(category, className="text-xl font-semibold mb-4"),
-                    html.Div([
-                        html.Span(skill, className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full mr-2 mb-2 inline-block")
-                        for skill in skill_list
+        return html.Div(className="p-4", children=[
+            html.H2("My Skills", className="text-3xl font-bold mb-4 text-yellow-600"),
+            html.Div(className="grid grid-cols-1 md:grid-cols-3 gap-4", children=[
+                html.Div(className="card bg-white shadow-lg rounded-lg border-2 border-red-500", children=[
+                    html.Div(className="card-body", children=[
+                        html.H4(category, className="card-title text-xl font-semibold text-blue-600"),
+                        html.Ul(className="list-disc pl-5", children=[
+                            html.Li([
+                                html.I(className="fas fa-check mr-2 text-yellow-500"),
+                                skill
+                            ]) for skill in skills_list
+                        ])
                     ])
-                ], className="bg-white p-6 rounded-lg shadow-md")
-                for category, skill_list in skills.items()
-            ], className="grid grid-cols-3 gap-6")
+                ]) for category, skills_list in skills.items()
+            ])
         ])
 
     def contact_page(self):
-        return html.Div([
-            html.H2("Get in Touch", className="text-3xl font-bold mb-6 text-gray-800"),
-            html.Form([
-                html.Div([
-                    dcc.Input(
-                        type="text",
-                        placeholder="Your Name",
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
-                    )
-                ], className="mb-4"),
-                html.Div([
-                    dcc.Input(
-                        type="email",
-                        placeholder="Your Email",
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
-                    )
-                ], className="mb-4"),
-                html.Div([
-                    dcc.Textarea( placeholder="Your Message",
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
-                    )
-                ], className="mb-4"),
-                html.Button("Send Message",
-                            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300")
+        return html.Div(className="p-4", children=[
+            html.H2("Contact Me", className="text-3xl font-bold mb-4 text-blue-600"),
+            html.Form(children=[
+                html.Div(className="form-control mb-4", children=[
+                    html.Label("Name", className="label text-red-600"),
+                    dcc.Input(type="text", placeholder="Your Name", className="input input-bordered border-yellow-500")
+                ]),
+                html.Div(className="form-control mb-4", children=[
+                    html.Label("Email", className="label text-red-600"),
+                 dcc.Input(type="email", placeholder="Your Email", className="input input-bordered border-yellow-500")
+                ]),
+                html.Div(className="form-control mb-4", children=[
+                    html.Label("Message", className="label text-red-600"),
+                    dcc.Textarea(placeholder="Your Message", className="textarea textarea-bordered border-yellow-500")
+                ]),
+                html.Button([
+                    html.I(className="fas fa-paper-plane mr-2"),
+                    "Send Message"
+                ], className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white")
             ])
         ])
 
