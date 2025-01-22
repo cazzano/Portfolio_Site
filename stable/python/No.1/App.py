@@ -1,183 +1,191 @@
 import dash
 from dash import html, dcc
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
+from dataclasses import dataclass, field
+from typing import List, Dict
+
+@dataclass
+class ProjectConfig:
+    name: str
+    description: str
+    technologies: List[str]
+    icon: str
+    gradient: str
+
+@dataclass
+class ServiceConfig:
+    name: str
+    description: str
+    icon: str
+
+class PortfolioConfig:
+    def __init__(self):
+        self.projects = [
+            ProjectConfig(
+                name="Neural Network Explorer",
+                description="Advanced AI-powered data analysis platform",
+                technologies=["PyTorch", "React", "Docker"],
+                icon="fas fa-brain",
+                gradient="from-purple-500 to-pink-500"
+            ),
+            ProjectConfig(
+                name="Quantum Visualization",
+                description="Real-time quantum computing simulation",
+                technologies=["Qiskit", "D3.js", "WebGL"],
+                icon="fas fa-atom",
+                gradient="from-blue-500 to-green-500"
+            )
+        ]
+
+        self.services = [
+            ServiceConfig(
+                name="Software Engineering",
+                description="Cutting-edge solution development",
+                icon="fas fa-code"
+            ),
+            ServiceConfig(
+                name="AI Consulting",
+                description="Intelligent system design",
+                icon="fas fa-robot"
+            ),
+            ServiceConfig(
+                name="Cloud Architecture",
+                description="Scalable infrastructure solutions",
+                icon="fas fa-cloud"
+            )
+        ]
 
 class PortfolioApp:
     def __init__(self):
-        # Initialize the Dash app
+        self.config = PortfolioConfig()
         self.app = dash.Dash(__name__,
-                              external_stylesheets=[
-                                  "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css",
-                                  "https://cdn.jsdelivr.net/npm/daisyui@1.14.0/dist/full.css",
-                                  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-                              ],
-                              meta_tags=[
-                                  {"name": "viewport",
-                                   "content": "width=device-width, initial-scale=1"}
-                              ])
+            external_stylesheets=[
+                "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css",
+                "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+            ],
+            meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}]
+        )
 
-        # Set the app title
-        self.app.title = "My Developer Portfolio"
+        self.app.title = "Quantum Digital Portfolio"
+        self.app.layout = self._create_layout()
+        self._register_callbacks()
 
-        # Define the layout
-        self.app.layout = self.create_layout()
-
-        # Register callbacks
-        self.register_callbacks()
-
-    def create_layout(self):
+    def _create_layout(self):
         return html.Div([
-            # Navbar
-            html.Nav(className="navbar bg-gray-800 text-white shadow-lg", children=[
-                html.Div(className="flex-1", children=[
-                    html.A(
-                        html.I(className="fas fa-user-circle text-2xl"),  # Icon instead of logo
-                        href="/",
-                        className="btn btn-ghost normal-case text-xl"
-                    ),
-                    html.Span("Your Name", className="text-xl font-bold ml-2")
-                ]),
-                html.Div(className="flex-none", children=[
-                    html.Ul(className="menu menu-horizontal p-0", children=[
-                        html.Li(html.A([
-                            html.I(className="fas fa-home mr-2"),
-                            "Home"
-                        ], href="/")),
-                        html.Li(html.A([
-                            html.I(className="fas fa-project-diagram mr-2"),
-                            "Projects"
-                        ], href="/projects")),
-                        html.Li(html.A([
-                            html.I(className="fas fa-code mr-2"),
-                            "Skills"
-                        ], href="/skills")),
-                        html.Li(html.A([
-                            html.I(className="fas fa-envelope mr-2"),
-                            "Contact"
-                        ], href="/contact")),
-                    ])
-                ])
+            # Navigation
+            html.Nav([
+                html.Div([
+                    html.Div([
+                        html.Span("AR", className="text-2xl font-bold text-white bg-black px-3 py-1 rounded-full mr-4"),
+                        html.Div([
+                            html.A("Home", href="/", className="mx-3 text-gray-700 hover:text-black"),
+                            html.A("Projects", href="/projects", className="mx-3 text-gray-700 hover:text-black"),
+                            html.A("Services", href="/services", className="mx-3 text-gray-700 hover:text-black"),
+                            html.A("Contact", href="/contact", className="mx-3 text-gray-700 hover:text-black")
+                        ], className="inline-block")
+                    ], className="flex items-center justify-between")
+                ], className="container mx-auto py-6")
+            ], className="border-b border-gray-200"),
+
+            # Dynamic Content
+            html.Div(id='page-content', className='min-h-screen'),
+
+            # Footer
+            html.Footer([
+                html.Div([
+                    html.Div([
+                        html.Div([
+                            html.A(html.I(className="fab fa-github text-2xl mr-4"), href="#"),
+                            html.A(html.I(className="fab fa-linkedin text-2xl mr-4"), href="#"),
+                            html.A(html.I(className="fab fa-twitter text-2xl"), href="#")
+                        ], className="flex justify-center mb-4")
+                    ], className="container mx-auto")
+                ], className="bg-gray-100 py-8")
             ]),
 
-            # Content area
-            html.Div(id='page-content', className='p-4 bg-gray-100 text-gray-800'),
-
-            # Pages
+            # Routing
             dcc.Location(id='url', refresh=False)
         ])
 
-    def register_callbacks(self):
-        # Page routing callback
+    def _register_callbacks(self):
         @self.app.callback(
             Output('page-content', 'children'),
             [Input('url', 'pathname')]
         )
         def display_page(pathname):
-            if pathname == "/" or pathname == "/home":
-                return self.home_page()
-            elif pathname == "/projects":
-                return self.projects_page()
-            elif pathname == "/skills":
-                return self.skills_page()
-            elif pathname == "/contact":
-                return self.contact_page()
-            return self.home_page()
+            page_routes = {
+                '/': self.home_page,
+                '/projects': self.projects_page,
+                '/services': self.services_page,
+                '/contact': self.contact_page
+            }
+            return page_routes.get(pathname, self.home_page)()
 
     def home_page(self):
-        return html.Div(className="hero min-h-screen bg-gray-200", children=[
-            html.Div(className="hero-content flex-col lg:flex-row", children=[
-                html.Div(className="max-w-md", children=[
-                    html.H1("Welcome to My Portfolio", className="text-5xl font-bold text-gray-800"),
-                    html.P("I'm a passionate developer creating innovative solutions", className="py-6 text-gray-600"),
-                    html.A([
-                        html.I(className="fas fa-eye mr-2"),
-                        "View My Projects"
-                    ], href="/projects", className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white")
-                ]),
-                html.Div(className="max-w-sm flex justify-center items-center", children=[
-                    html.I(className="fas fa-user-circle text-6xl text-gray-800")  # Icon instead of profile picture
-                ])
-            ])
+        return html.Div([
+            html.Div([
+                html.Div([
+                    html.H1("Alex Rodriguez", className="text-6xl font-bold mb-4"),
+                    html.H2("Quantum Software Architect", className="text-2xl text-gray-600 mb-8"),
+                    html.P("Bridging the gap between innovative technology and transformative solutions.",
+                           className="text-xl text-gray-500 mb-12"),
+                    html.Div([
+                        html.A("View Projects", href="/projects",
+                               className="px-8 py-3 bg-black text-white rounded-full mr-4 hover:bg-gray-800"),
+                        html.A("Download CV", href="#",
+                               className="px-8 py-3 border-2 border-black text-black rounded-full hover:bg-black hover:text-white")
+                    ])
+                ], className="text-center max-w-2xl mx-auto")
+            ], className="flex items-center justify-center min-h-screen")
         ])
 
     def projects_page(self):
-        projects = [
-            {
-                "name": "Project 1",
-                "description": "A web application for task management",
-                "technologies": ["Python", "Dash", "Bootstrap"],
-                "link": "#"
-            },
-            {
-                "name": "Project 2",
-                "description": "Machine learning recommendation system",
-                "technologies": ["Python", "scikit-learn", "Pandas"],
-                "link": "#"
-            }
-        ]
-
-        return html.Div(className="p-4", children=[
-            html.H2("My Projects", className="text-3xl font -bold mb-4 text-gray-800"),
-            html.Div(className="grid grid-cols-1 md:grid-cols-2 gap-4", children=[
-                html.Div(className="card bg-white shadow-lg rounded-lg", children=[
-                    html.Div(className="card-body", children=[
-                        html.H5(project["name"], className="card-title text-xl font-semibold"),
-                        html.P(project["description"], className="card-text text-gray-700"),
-                        html.P(f"Technologies: {', '.join(project['technologies'])}", className="card-text text-gray-600"),
-                        html.A([
-                            html.I(className="fas fa-link mr-2"),
-                            "View Project"
-                        ], href=project["link"], className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white")
-                    ])
-                ]) for project in projects
-            ])
+        return html.Div([
+            html.Div([
+                html.H2("Featured Projects", className="text-4xl font-bold text-center mb-16"),
+                html.Div([
+                    html.Div([
+                        html.Div([
+                            html.I(className=f"{project.icon} text-5xl mb-6 bg-clip-text text-transparent bg-gradient-to-r {project.gradient}"),
+                            html.H3(project.name, className="text-2xl font-bold mb-4"),
+                            html.P(project.description, className="text-gray-600 mb-6"),
+                            html.Div([
+                                html.Span(tech, className="bg-gray-100 px-3 py-1 rounded-full text-sm mr-2 mb-2")
+                                for tech in project.technologies
+                            ], className="flex flex-wrap")
+                        ], className="p-8 border border-gray-200 rounded-lg hover:shadow-lg transition-all")
+                    ], className="mb-8") for project in self.config.projects
+                ], className="grid md:grid-cols-2 gap-8")
+            ], className="container mx-auto py-20")
         ])
 
-    def skills_page(self):
-        skills = {
-            "Programming Languages": ["Python", "JavaScript", "Java"],
-            "Web Technologies": ["Dash", "Flask", "React"],
-            "Data Science": ["Pandas", "NumPy", "scikit-learn"]
-        }
-
-        return html.Div(className="p-4", children=[
-            html.H2("My Skills", className="text-3xl font-bold mb-4 text-gray-800"),
-            html.Div(className="grid grid-cols-1 md:grid-cols-3 gap-4", children=[
-                html.Div(className="card bg-white shadow-lg rounded-lg", children=[
-                    html.Div(className="card-body", children=[
-                        html.H4(category, className="card-title text-xl font-semibold"),
-                        html.Ul(className="list-disc pl-5", children=[
-                            html.Li([
-                                html.I(className="fas fa-check mr-2"),
-                                skill
-                            ]) for skill in skills_list
-                        ])
-                    ])
-                ]) for category, skills_list in skills.items()
-            ])
+    def services_page(self):
+        return html.Div([
+            html.Div([
+                html.H2("Professional Services", className="text-4xl font-bold text-center mb-16"),
+                html.Div([
+                    html.Div([
+                        html.Div([
+                            html.I(className=f"{service.icon} text-5xl mb-6 text-black"),
+                            html.H3(service.name, className="text-2xl font-bold mb-4"),
+                            html.P(service.description, className="text-gray-600")
+                        ], className="text-center p-8 border border-gray-200 rounded-lg hover:shadow-lg transition-all")
+                    ]) for service in self.config.services
+                ], className="grid md:grid-cols-3 gap-8")
+            ], className="container mx-auto py-20")
         ])
 
     def contact_page(self):
-        return html.Div(className="p-4", children=[
-            html.H2("Contact Me", className="text-3xl font-bold mb-4 text-gray-800"),
-            html.Form(children=[
-                html.Div(className="form-control mb-4", children=[
-                    html.Label("Name", className="label text-gray-700"),
-                    dcc.Input(type="text", placeholder="Your Name", className="input input-bordered border-gray-300")  # Changed to dcc.Input
-                ]),
-                html.Div(className="form-control mb-4", children=[
-                    html.Label("Email", className="label text-gray-700"),
-                    dcc.Input(type="email", placeholder="Your Email", className="input input-bordered border-gray-300")  # Changed to dcc.Input
-                ]),
-                html.Div(className="form-control mb-4", children=[
-                    html.Label("Message", className="label text-gray-700"),
-                    dcc.Textarea(placeholder="Your Message", className="textarea textarea-bordered border-gray-300")  # Changed to dcc.Textarea
-                ]),
-                html.Button([
-                    html.I(className="fas fa-paper-plane mr-2"),
-                    "Send Message"
-                ], className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white")
-            ])
+        return html.Div([
+            html.Div([
+                html. H2("Get In Touch", className="text-4xl font-bold text-center mb-16"),
+                html.Div([
+                    dcc.Input(id='contact-name', placeholder="Your Name", className="input input-bordered w-full mb-4"),
+                    dcc.Input(id='contact-email', placeholder="Your Email", type="email", className="input input-bordered w-full mb-4"),
+                    dcc.Textarea(id='contact-message', placeholder="Your Message", className="textarea textarea-bordered w-full mb-4"),
+                    html.Button("Send Message", id='send-button', className="btn bg-black text-white hover:bg-gray-800")
+                ], className="bg-white p-8 border border-gray-200 rounded-lg shadow-lg")
+            ], className="container mx-auto py-20")
         ])
 
 if __name__ == "__main__":
