@@ -17,7 +17,7 @@ class PortfolioApp:
                               ])
 
         # Set the app title
-        self.app.title = "My Portfolio"
+        self.app.title = "My Developer Portfolio"
 
         # Define the layout
         self.app.layout = self.create_layout()
@@ -28,7 +28,7 @@ class PortfolioApp:
     def create_layout(self):
         return html.Div([
             # Navbar
-            html.Nav(className="navbar bg-base-100 shadow-lg", children=[
+            html.Nav(className="navbar bg-gray-800 text-white shadow-lg", children=[
                 html.Div(className="flex-1", children=[
                     html.A(
                         html.I(className="fas fa-user-circle text-2xl"),  # Icon instead of logo
@@ -60,7 +60,7 @@ class PortfolioApp:
             ]),
 
             # Content area
-            html.Div(id='page-content', className='p-4'),
+            html.Div(id='page-content', className='p-4 bg-gray-100 text-gray-800'),
 
             # Pages
             dcc.Location(id='url', refresh=False)
@@ -84,18 +84,18 @@ class PortfolioApp:
             return self.home_page()
 
     def home_page(self):
-        return html.Div(className="hero min-h-screen bg-base-200", children=[
+        return html.Div(className="hero min-h-screen bg-gray-200", children=[
             html.Div(className="hero-content flex-col lg:flex-row", children=[
                 html.Div(className="max-w-md", children=[
-                    html.H1("Welcome to My Portfolio", className="text-5xl font-bold"),
-                    html.P("I'm a passionate developer creating innovative solutions", className="py-6"),
+                    html.H1("Welcome to My Portfolio", className="text-5xl font-bold text-gray-800"),
+                    html.P("I'm a passionate developer creating innovative solutions", className="py-6 text-gray-600"),
                     html.A([
                         html.I(className="fas fa-eye mr-2"),
                         "View My Projects"
-                    ], href="/projects", className="btn btn-primary")
+                    ], href="/projects", className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white")
                 ]),
                 html.Div(className="max-w-sm flex justify-center items-center", children=[
-                    html.I(className="fas fa-user-circle text-6xl")  # Icon instead of profile picture
+                    html.I(className="fas fa-user-circle text-6xl text-gray-800")  # Icon instead of profile picture
                 ])
             ])
         ])
@@ -117,17 +117,17 @@ class PortfolioApp:
         ]
 
         return html.Div(className="p-4", children=[
-            html.H2("My Projects", className="text-3xl font-bold mb-4"),
-            html.Div(className="grid grid-cols-1 md:grid -cols-2 gap-4", children=[
-                html.Div(className="card bg-base-100 shadow-xl", children=[
+            html.H2("My Projects", className="text-3xl font -bold mb-4 text-gray-800"),
+            html.Div(className="grid grid-cols-1 md:grid-cols-2 gap-4", children=[
+                html.Div(className="card bg-white shadow-lg rounded-lg", children=[
                     html.Div(className="card-body", children=[
-                        html.H5(project["name"], className="card-title"),
-                        html.P(project["description"], className="card-text"),
-                        html.P(f"Technologies: {', '.join(project['technologies'])}", className="card-text"),
+                        html.H5(project["name"], className="card-title text-xl font-semibold"),
+                        html.P(project["description"], className="card-text text-gray-700"),
+                        html.P(f"Technologies: {', '.join(project['technologies'])}", className="card-text text-gray-600"),
                         html.A([
                             html.I(className="fas fa-link mr-2"),
                             "View Project"
-                        ], href=project["link"], className="btn btn-primary")
+                        ], href=project["link"], className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white")
                     ])
                 ]) for project in projects
             ])
@@ -141,11 +141,11 @@ class PortfolioApp:
         }
 
         return html.Div(className="p-4", children=[
-            html.H2("My Skills", className="text-3xl font-bold mb-4"),
+            html.H2("My Skills", className="text-3xl font-bold mb-4 text-gray-800"),
             html.Div(className="grid grid-cols-1 md:grid-cols-3 gap-4", children=[
-                html.Div(className="card bg-base-100 shadow-xl", children=[
+                html.Div(className="card bg-white shadow-lg rounded-lg", children=[
                     html.Div(className="card-body", children=[
-                        html.H4(category, className="card-title"),
+                        html.H4(category, className="card-title text-xl font-semibold"),
                         html.Ul(className="list-disc pl-5", children=[
                             html.Li([
                                 html.I(className="fas fa-check mr-2"),
@@ -159,24 +159,24 @@ class PortfolioApp:
 
     def contact_page(self):
         return html.Div(className="p-4", children=[
-            html.H2("Contact Me", className="text-3xl font-bold mb-4"),
+            html.H2("Contact Me", className="text-3xl font-bold mb-4 text-gray-800"),
             html.Form(children=[
                 html.Div(className="form-control mb-4", children=[
-                    html.Label("Name", className="label"),
-                    dcc.Input(type="text", placeholder="Your Name", className="input input-bordered")  # Changed to dcc.Input
+                    html.Label("Name", className="label text-gray-700"),
+                    dcc.Input(type="text", placeholder="Your Name", className="input input-bordered border-gray-300")  # Changed to dcc.Input
                 ]),
                 html.Div(className="form-control mb-4", children=[
-                    html.Label("Email", className="label"),
-                    dcc.Input(type="email", placeholder="Your Email", className="input input-bordered")  # Changed to dcc.Input
+                    html.Label("Email", className="label text-gray-700"),
+                    dcc.Input(type="email", placeholder="Your Email", className="input input-bordered border-gray-300")  # Changed to dcc.Input
                 ]),
                 html.Div(className="form-control mb-4", children=[
-                    html.Label("Message", className="label"),
-                    dcc.Textarea(placeholder="Your Message", className="textarea textarea-bordered")  # Changed to dcc.Textarea
+                    html.Label("Message", className="label text-gray-700"),
+                    dcc.Textarea(placeholder="Your Message", className="textarea textarea-bordered border-gray-300")  # Changed to dcc.Textarea
                 ]),
                 html.Button([
                     html.I(className="fas fa-paper-plane mr-2"),
                     "Send Message"
-                ], className="btn btn-primary")
+                ], className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white")
             ])
         ])
 
