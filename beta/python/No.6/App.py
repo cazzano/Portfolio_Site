@@ -3,6 +3,7 @@ from dash import html, dcc
 from dash.dependencies import Input, Output, State
 from dataclasses import dataclass, field
 from typing import List, Dict
+import flask
 
 @dataclass
 class ProjectConfig:
@@ -57,9 +58,15 @@ class PortfolioConfig:
         ]
 
 class PortfolioApp:
-    def __init__(self):
+    def __init__(self, server=None):
+        # If no server is provided, create a new Flask server
+        if server is None:
+            server = flask.Flask(__name__)
+
         self.config = PortfolioConfig()
-        self.app = dash.Dash(__name__,
+        self.app = dash.Dash(
+            __name__,
+            server=server,
             external_stylesheets=[
                 "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css",
                 "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -122,7 +129,7 @@ class PortfolioApp:
                         }
                         99% {
                             text-shadow:
-                                0.025em 0.05em 0 #00fffc,
+                                0.025em 0.05em 0 #00fffc ,
                                 0.05em 0 0 #fc00ff,
                                 0 -0.05em 0 #fffc00;
                         }

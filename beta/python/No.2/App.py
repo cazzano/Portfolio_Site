@@ -1,19 +1,27 @@
 import dash
 from dash import html, dcc
 from dash.dependencies import Input, Output
+import flask
 
 class PortfolioApp:
-    def __init__(self):
-        self.app = dash.Dash(__name__,
-                              external_stylesheets=[
-                                  "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css",
-                                  "https://cdn.jsdelivr.net/npm/daisyui@1.14.0/dist/full.css",
-                                  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-                              ],
-                              meta_tags=[
-                                  {"name": "viewport",
-                                   "content": "width=device-width, initial-scale=1"}
-                              ])
+    def __init__(self, server=None):
+        # If no server is provided, create a new Flask server
+        if server is None:
+            server = flask.Flask(__name__)
+
+        # Initialize Dash app with the server
+        self.app = dash.Dash(
+            __name__,
+            server=server,
+            external_stylesheets=[
+                "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css",
+                "https://cdn.jsdelivr.net/npm/daisyui@1.14.0/dist/full.css",
+                "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+            ],
+            meta_tags=[
+                {"name": "viewport", "content": "width=device-width, initial-scale=1"}
+            ]
+        )
 
         self.app.title = "Colorful Developer Portfolio"
 
@@ -157,11 +165,10 @@ class PortfolioApp:
             html.Form(children=[
                 html.Div(className="form-control mb-4", children=[
                     html.Label("Name", className="label text-red-600"),
-                    dcc.Input(type="text", placeholder="Your Name", className="input input-bordered border-yellow-500")
-                ]),
+                    dcc.Input(type="text", placeholder="Your Name", className="input input-bordered border-yellow-500") ]),
                 html.Div(className="form-control mb-4", children=[
                     html.Label("Email", className="label text-red-600"),
-                 dcc.Input(type="email", placeholder="Your Email", className="input input-bordered border-yellow-500")
+                    dcc.Input(type="email", placeholder="Your Email", className="input input-bordered border-yellow-500")
                 ]),
                 html.Div(className="form-control mb-4", children=[
                     html.Label("Message", className="label text-red-600"),

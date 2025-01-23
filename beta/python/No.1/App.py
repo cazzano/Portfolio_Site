@@ -3,6 +3,7 @@ from dash import html, dcc
 from dash.dependencies import Input, Output, State
 from dataclasses import dataclass, field
 from typing import List, Dict
+import flask
 
 @dataclass
 class ProjectConfig:
@@ -56,9 +57,18 @@ class PortfolioConfig:
         ]
 
 class PortfolioApp:
-    def __init__(self):
+    def __init__(self, server=None):
+        # Initialize Dash app with optional Flask server
         self.config = PortfolioConfig()
-        self.app = dash.Dash(__name__,
+
+        # If no server is provided, create a new Flask server
+        if server is None:
+            server = flask.Flask(__name__)
+
+        # Initialize Dash app with the server
+        self.app = dash.Dash(
+            __name__,
+            server=server,
             external_stylesheets=[
                 "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css",
                 "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -170,7 +180,7 @@ class PortfolioApp:
                             html.H3(service.name, className="text-2xl font-bold mb-4"),
                             html.P(service.description, className="text-gray-600")
                         ], className="text-center p-8 border border-gray-200 rounded-lg hover:shadow-lg transition-all")
-                    ]) for service in self.config.services
+                     ]) for service in self.config.services
                 ], className="grid md:grid-cols-3 gap-8")
             ], className="container mx-auto py-20")
         ])
@@ -178,7 +188,7 @@ class PortfolioApp:
     def contact_page(self):
         return html.Div([
             html.Div([
-                html. H2("Get In Touch", className="text-4xl font-bold text-center mb-16"),
+                html.H2("Get In Touch", className="text-4xl font-bold text-center mb-16"),
                 html.Div([
                     dcc.Input(id='contact-name', placeholder="Your Name", className="input input-bordered w-full mb-4"),
                     dcc.Input(id='contact-email', placeholder="Your Email", type="email", className="input input-bordered w-full mb-4"),

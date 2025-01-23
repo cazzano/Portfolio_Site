@@ -1,18 +1,26 @@
 import dash
 from dash import html, dcc
 from dash.dependencies import Input, Output
+import flask
 
 class PortfolioApp:
-    def __init__(self):
-        self.app = dash.Dash(__name__,
-                              external_stylesheets=[
-                                  "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css",
-                                  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-                              ],
-                              meta_tags=[
-                                  {"name": "viewport",
-                                   "content": "width=device-width, initial-scale=1"}
-                              ])
+    def __init__(self, server=None):
+        # If no server is provided, create a new Flask server
+        if server is None:
+            server = flask.Flask(__name__)
+
+        # Initialize Dash app with the server
+        self.app = dash.Dash(
+            __name__,
+            server=server,
+            external_stylesheets=[
+                "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css",
+                "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+            ],
+            meta_tags=[
+                {"name": "viewport", "content": "width=device-width, initial-scale=1"}
+            ]
+        )
 
         self.app.title = "Colorful Creative Portfolio"
         self.app.layout = self.create_layout()
@@ -87,7 +95,7 @@ class PortfolioApp:
                     ], className="text-xl text-gray-700 mb-8"),
 
                     # Call to Action Buttons with Colorful Design and Icons
-                    html.Div([
+ html.Div([
                         html.A([
                             html.I(className="fas fa-eye mr-2"),
                             "View Projects"
@@ -136,7 +144,7 @@ class PortfolioApp:
                                           "-webkit-text-fill-color": "transparent"}),
                             html.H3(project["name"],
                                     className="text-2xl font-semibold mb-4 text-gray-800"),
-                            html .P(project["description"],
+                            html.P(project["description"],
                                    className="text-gray-600 mb-4"),
                             html.Div([
                                 html.Span(tech,
@@ -181,7 +189,7 @@ class PortfolioApp:
         return html.Div([
             html.Div([
                 html.H2([
-                    html.I(className="fas fa-envelope-open-text mr-4 text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-yellow-400 to-blue-500"),
+                    html.I(className="fas fa-envelope-open-text mr-4 text-transparent bg -clip-text bg-gradient-to-r from-red-500 via-yellow-400 to-blue-500"),
                     "Get in Touch"
                 ], className="text-4xl font-bold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-yellow-400 to-blue-500"),
                 html.Div([

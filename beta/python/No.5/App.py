@@ -3,6 +3,7 @@ from dash import html, dcc
 from dash.dependencies import Input, Output, State
 from dataclasses import dataclass, field
 from typing import List, Dict
+import flask
 
 @dataclass
 class ProjectConfig:
@@ -60,9 +61,18 @@ class PortfolioConfig:
         ]
 
 class PortfolioApp:
-    def __init__(self):
+    def __init__(self, server=None):
+        # If no server is provided, create a new Flask server
+        if server is None:
+            server = flask.Flask(__name__)
+
+        # Initialize configuration
         self.config = PortfolioConfig()
-        self.app = dash.Dash(__name__,
+
+        # Initialize Dash app with the server
+        self.app = dash.Dash(
+            __name__,
+            server=server,
             external_stylesheets=[
                 "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css",
                 "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -76,11 +86,14 @@ class PortfolioApp:
 
     def _create_layout(self):
         return html.Div([
-            # Navigation
+            # Navigation Bar
             html.Nav([
                 html.Div([
                     html.Div([
+                        # Logo
                         html.Span("AR", className="text-2xl font-bold text-white bg-red-500 px-3 py-1 rounded-full mr-4"),
+
+                        # Navigation Links
                         html.Div([
                             html.A("Home", href="/", className="mx-3 text-blue-600 hover:text-yellow-500 transition duration-300"),
                             html.A("Projects", href="/projects", className="mx-3 text-blue-600 hover:text-yellow-500 transition duration-300"),
@@ -91,23 +104,24 @@ class PortfolioApp:
                 ], className="container mx-auto py-6")
             ], className="border-b border-gray-200 shadow-sm"),
 
-            # Dynamic Content
+            # Dynamic Content Area
             html.Div(id='page-content', className='min-h-screen'),
 
             # Footer
             html.Footer([
                 html.Div([
                     html.Div([
+                        # Social Media Links
                         html.Div([
-                            html.A(html.I(className="fab fa-github text-2xl mr-4 text-blue-600 hover:text-red-500 transition duration-300"), href="#"),
-                            html.A(html.I(className="fab fa-linkedin text-2xl mr-4 text-blue-600 hover:text-yellow-500 transition duration-300"), href="#"),
-                            html.A(html.I(className="fab fa-twitter text-2xl text-blue-600 hover:text-red-500 transition duration-300"), href="#")
+                            html.A(html.I(className="fab fa-github text-2xl mr-4 text-blue-600 hover:text-red-500"), href="#"),
+                            html.A(html.I(className="fab fa-linkedin text-2xl mr-4 text-blue-600 hover:text-yellow-500"), href="#"),
+                            html.A(html.I(className="fab fa-twitter text-2xl text-blue-600 hover:text-red-500"), href="#")
                         ], className="flex justify-center mb-4")
                     ], className="container mx-auto")
                 ], className="bg-gray-100 py-8")
             ]),
 
-            # Routing
+            # Routing Component
             dcc.Location(id='url', refresh=False)
         ])
 
@@ -134,24 +148,11 @@ class PortfolioApp:
                     html.P("Bridging the gap between innovative technology and transformative solutions.",
                            className="text-xl text-yellow-500 mb-12"),
                     html.Div([
-                        # Advanced Projects Button
-                        html.A([
-                            html.Div([
-                                html.I(className="fas fa-project-diagram mr-3"),
-                                "View Projects",
-                                html.Span(className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-25 transition-opacity duration-300 rounded-full")
-                            ], className="relative px-8 py-3 bg-white text-blue-600 border-2 border-blue-600 rounded-full font-bold transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group overflow-hidden")
-                        ], href="/projects"),
-
-                        # Advanced CV Download Button
-                        html.A([
-                            html.Div([
-                                html.I(className="fas fa-download mr-3"),
-                                "Download CV",
-                                html.Span(className="absolute inset-0 bg-yellow-500 opacity-0 group-hover:opacity-25 transition-opacity duration-300 rounded-full")
-                            ], className="relative px-8 py-3 bg-white text-yellow-600 border-2 border-yellow-600 rounded-full font-bold transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group overflow-hidden ml-4")
-                        ], href="#")
-                    ], className="flex justify-center space-x-4")
+                        html.A("View Projects", href="/projects",
+                               className="px-8 py-3 bg-blue-600 text-white rounded-full hover:bg-red-500 transition duration-300 mr-4"),
+                        html.A("Download CV", href="#",
+                               className="px-8 py-3 border-2 border-yellow-500 text-yellow-500 rounded-full hover:bg-yellow-500 hover:text-white transition duration-300")
+                    ], className="flex justify-center")
                 ], className="text-center max-w-2xl mx-auto")
             ], className="flex items-center justify-center min-h-screen")
         ])
@@ -167,17 +168,9 @@ class PortfolioApp:
                             html.H3(project.name, className="text-2xl font-bold mb-4 text-red-500"),
                             html.P(project.description, className="text-yellow-500 mb-6"),
                             html.Div([
-                                html.Span(tech, className="bg-blue-100 text-blue-600 px-3 py- 1 rounded-full text-sm mr-2 mb-2")
+                                html.Span(tech, className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm mr-2 mb-2")
                                 for tech in project.technologies
-                            ], className="flex flex-wrap"),
-
-                            # Advanced Project Details Button
-                            html.Div([
-                                html.Button([
-                                    "Explore Project ",
-                                    html.I(className="fas fa-arrow-right ml-2")
-                                ], className="group relative px-6 py-2 bg-red-500 text-white rounded-full overflow-hidden transform transition-all duration-300 hover:pr-8 hover:bg-red-600")
-                            ], className="mt-4 flex justify-center")
+                            ], className="flex flex-wrap")
                         ], className="p-8 border border-gray-200 rounded-lg hover:shadow-lg transition-all")
                     ], className="mb-8") for project in self.config.projects
                 ], className="grid md:grid-cols-2 gap-8")
@@ -187,20 +180,15 @@ class PortfolioApp:
     def services_page(self):
         return html.Div([
             html.Div([
-                html.H2("Professional Services", className="text-4xl font-bold text-center mb-16 text-blue-600"),
+                html.H2("Professional Services ", className="text-4xl font-bold text-center mb-16 text-blue-600"),
                 html.Div([
                     html.Div([
                         html.Div([
                             html.I(className=f"{service.icon} text-5xl mb-6 {service.color}"),
                             html.H3(service.name, className="text-2xl font-bold mb-4 text-red-500"),
                             html.P(service.description, className="text-yellow-500 mb-6"),
-
-                            # Advanced Service Details Button
                             html.Div([
-                                html.Button([
-                                    "Learn More ",
-                                    html.I(className="fas fa-info-circle ml-2")
-                                ], className="group relative px-6 py-2 bg-blue-500 text-white rounded-full overflow-hidden transform transition-all duration-300 hover:pr-8 hover:bg-blue-600")
+                                html.Button("Learn More", className="px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition duration-300")
                             ], className="mt-4 flex justify-center")
                         ], className="text-center p-8 border border-gray-200 rounded-lg hover:shadow-lg transition-all")
                     ]) for service in self.config.services
@@ -216,14 +204,8 @@ class PortfolioApp:
                     dcc.Input(id='contact-name', placeholder="Your Name", className="input input-bordered w-full mb-4"),
                     dcc.Input(id='contact-email', placeholder="Your Email", type="email", className="input input-bordered w-full mb-4"),
                     dcc.Textarea(id='contact-message', placeholder="Your Message", className="textarea textarea-bordered w-full mb-4"),
-
-                    # Advanced Send Message Button
                     html.Div([
-                        html.Button([
-                            html.I(className="fas fa-paper-plane mr-3"),
-                            "Send Message",
-                            html.Span(className="absolute inset-0 bg-red-500 opacity-0 group-hover:opacity-25 transition-opacity duration-300 rounded-full")
-                        ], id='send-button', className="group relative px-8 py-3 bg-white text-red-600 border-2 border-red-600 rounded-full font-bold transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden")
+                        html.Button("Send Message", id='send-button', className="px-8 py-3 bg-red-600 text-white rounded-full hover:bg-red-500 transition duration-300")
                     ], className="flex justify-center")
                 ], className="bg-white p-8 border border-gray-200 rounded-lg shadow-lg")
             ], className="container mx-auto py-20")

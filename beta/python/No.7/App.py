@@ -3,6 +3,7 @@ from dash import html, dcc
 from dash.dependencies import Input, Output, State
 from dataclasses import dataclass, field
 from typing import List, Dict
+import flask
 
 @dataclass
 class ProjectConfig:
@@ -27,7 +28,7 @@ class PortfolioConfig:
                 name="Geometric AI",
                 description="Innovative machine learning platform",
                 technologies=["Python", "TensorFlow", "React"],
-                icon="cube",
+                icon="fas fa-cube",
                 color_scheme={
                     "primary": "bg-blue-500",
                     "secondary": "text-blue-700",
@@ -38,7 +39,7 @@ class PortfolioConfig:
                 name="Quantum Network",
                 description="Decentralized communication ecosystem",
                 technologies=["Rust", "GraphQL", "WebAssembly"],
-                icon="hexagon",
+                icon="fas fa-hexagon",
                 color_scheme={
                     "primary": "bg-red-500",
                     "secondary": "text-red-700",
@@ -66,9 +67,15 @@ class PortfolioConfig:
         ]
 
 class PortfolioApp:
-    def __init__(self):
+    def __init__(self, server=None):
+        # If no server is provided, create a new Flask server
+        if server is None:
+            server = flask.Flask(__name__)
+
         self.config = PortfolioConfig()
-        self.app = dash.Dash(__name__,
+        self.app = dash.Dash(
+            __name__,
+            server=server,
             external_stylesheets=[
                 "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css",
                 "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -135,7 +142,7 @@ class PortfolioApp:
             html.Div([
                 html.Div([
                     # Geometric Logo
-                    html.Div([
+                    html .Div([
                         html.Div(
                             html.Span("AR", className="text-white text-2xl font-bold"),
                             className="shape-icon bg-black"
@@ -201,7 +208,7 @@ class PortfolioApp:
                     html.A("View Projects", href="/projects",
                            className="px-8 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 mr-4"),
                     html.A("Download CV", href="#",
-                           className="px-8 py-3 border-2 border-red-500  text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition duration-300")
+                           className="px-8 py-3 border-2 border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition duration-300")
                 ], className="flex justify-center")
             ], className="max-w-2xl mx-auto text-center mt-24")
         ])
