@@ -24,15 +24,22 @@ class PortfolioConfig:
         self.projects = [
             ProjectConfig(
                 name="Neural Network Explorer",
-                description="Advanced AI-powered data analysis platform",
-                technologies=["PyTorch", "React", "Docker"],
+                description="Advanced backend and frontend connector.",
+                technologies=["Godaddy", "Railway", "Docker"],
                 icon="fas fa-brain",
                 gradient="from-purple-500 to-pink-500"
             ),
             ProjectConfig(
-                name="Quantum Visualization",
-                description="Real-time quantum computing simulation",
-                technologies=["Qiskit", "D3.js", "WebGL"],
+                name="Frontend Of Web App",
+                description="It will be the visual thing of site.",
+                technologies=["React-Vite", "Dash", "Streamlit"],
+                icon="fas fa-atom",
+                gradient="from-blue-500 to-green-500"
+            ),
+            ProjectConfig(
+                name="Backend Of Web App",
+                description="From shipping to every thing.",
+                technologies=["Fastapi", "Flask", "Fibre","Actix"],
                 icon="fas fa-atom",
                 gradient="from-blue-500 to-green-500"
             )
@@ -45,7 +52,7 @@ class PortfolioConfig:
                 icon="fas fa-code"
             ),
             ServiceConfig(
-                name="AI Consulting",
+                name="Web Developement Consulting.",
                 description="Intelligent system design",
                 icon="fas fa-robot"
             ),
@@ -76,7 +83,7 @@ class PortfolioApp:
             meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}]
         )
 
-        self.app.title = "Quantum Digital Portfolio"
+        self.app.title = "Rico Rodriguez"
         self.app.layout = self._create_layout()
         self._register_callbacks()
 
@@ -86,12 +93,12 @@ class PortfolioApp:
             html.Nav([
                 html.Div([
                     html.Div([
-                        html.Span("AR", className="text-2xl font-bold text-white bg-black px-3 py-1 rounded-full mr-4"),
+                        html.Span("Rico Rodriguez", className="fas fa-robot text-2xl font-bold text-white bg-black px-3 py-1 rounded-full mr-4"),
                         html.Div([
-                            html.A("Home", href="/", className="mx-3 text-gray-700 hover:text-black"),
-                            html.A("Projects", href="/projects", className="mx-3 text-gray-700 hover:text-black"),
-                            html.A("Services", href="/services", className="mx-3 text-gray-700 hover:text-black"),
-                            html.A("Contact", href="/contact", className="mx-3 text-gray-700 hover:text-black")
+                            html.A("Home", href="/", className="mx-3 text-gray-700 hover:text-black fas fa-code"),
+                            html.A("Projects", href="/projects", className="mx-3 text-gray-700 hover:text-black fas fa-atom"),
+                            html.A("Services", href="/services", className="mx-3 text-gray-700 hover:text-black fas fa-cloud"),
+                            html.A("Contact", href="/contact", className="mx-3 text-gray-700 hover:text-black fas fa-phone")
                         ], className="inline-block")
                     ], className="flex items-center justify-between")
                 ], className="container mx-auto py-6")
@@ -125,7 +132,7 @@ class PortfolioApp:
         def display_page(pathname):
             page_routes = {
                 '/': self.home_page,
-                '/projects': self.projects_page,
+                '/projects': self.projects,
                 '/services': self.services_page,
                 '/contact': self.contact_page
             }
@@ -135,24 +142,24 @@ class PortfolioApp:
         return html.Div([
             html.Div([
                 html.Div([
-                    html.H1("Alex Rodriguez", className="text-6xl font-bold mb-4"),
-                    html.H2("Quantum Software Architect", className="text-2xl text-gray-600 mb-8"),
+                    html.H1("Rico Rodriguez", className="text-6xl font-bold mb-4"),
+                    html.H2("Simple Portfolio", className="text-2xl text-gray-600 mb-8"),
                     html.P("Bridging the gap between innovative technology and transformative solutions.",
                            className="text-xl text-gray-500 mb-12"),
                     html.Div([
                         html.A("View Projects", href="/projects",
-                               className="px-8 py-3 bg-black text-white rounded-full mr-4 hover:bg-gray-800"),
+                               className="px-8 py-3 bg-black text-white rounded-full mr-4 hover:bg-gray-800 fas fa-code"),
                         html.A("Download CV", href="#",
-                               className="px-8 py-3 border-2 border-black text-black rounded-full hover:bg-black hover:text-white")
+                               className="px-8 py-3 border-2 border-black text-black rounded-full hover:bg-black hover:text-white fas fa-download")
                     ])
                 ], className="text-center max-w-2xl mx-auto")
             ], className="flex items-center justify-center min-h-screen")
         ])
 
-    def projects_page(self):
+    def projects(self):
         return html.Div([
             html.Div([
-                html.H2("Featured Projects", className="text-4xl font-bold text-center mb-16"),
+                html.H2("My Handmade Projects", className="text-4xl font-bold text-center mb-16"),
                 html.Div([
                     html.Div([
                         html.Div([
@@ -172,7 +179,7 @@ class PortfolioApp:
     def services_page(self):
         return html.Div([
             html.Div([
-                html.H2("Professional Services", className="text-4xl font-bold text-center mb-16"),
+                html.H2("Our Services", className="text-4xl font-bold text-center mb-16"),
                 html.Div([
                     html.Div([
                         html.Div([
@@ -193,11 +200,11 @@ class PortfolioApp:
                     dcc.Input(id='contact-name', placeholder="Your Name", className="input input-bordered w-full mb-4"),
                     dcc.Input(id='contact-email', placeholder="Your Email", type="email", className="input input-bordered w-full mb-4"),
                     dcc.Textarea(id='contact-message', placeholder="Your Message", className="textarea textarea-bordered w-full mb-4"),
-                    html.Button("Send Message", id='send-button', className="btn bg-black text-white hover:bg-gray-800")
+                    html.Button("Send Message", id='send-button', className="px-8 py-3 border-2 border-black text-black rounded-full hover:bg-black hover:text-white fas fa-message")
                 ], className="bg-white p-8 border border-gray-200 rounded-lg shadow-lg")
             ], className="container mx-auto py-20")
         ])
 
 if __name__ == "__main__":
     app = PortfolioApp()
-    app.app.run_server(debug=True)
+    app.app.run_server(debug=False)
